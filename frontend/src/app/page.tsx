@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
+import { FeatureIcon3D } from '@/components/feature-icon-3d';
+import { StepVisual3D } from '@/components/step-visual-3d';
 import {
   Coin,
   CountUp,
@@ -23,19 +25,19 @@ const COUNTRIES = [
 const OPERATORS = ['Wave', 'Orange Money', 'MTN MoMo', 'Moov Money', 'Airtel Money', 'PawaPay', 'Paystack'];
 
 const STEPS = [
-  { icon: '🌍', title: 'Choisissez', text: "Pays de départ, pays d'arrivée et bénéficiaire — en quelques secondes." },
-  { icon: '🧮', title: 'Vérifiez', text: 'Les frais (2 % + 100 FCFA) et le montant reçu s’affichent instantanément.' },
-  { icon: '📲', title: 'Payez', text: 'Wave, Orange, MTN, Moov, carte… paiement sécurisé en un clic.' },
-  { icon: '✅', title: 'Confirmé', text: 'Le bénéficiaire reçoit l’argent. Vous suivez tout en temps réel.' },
+  { visual: 'choose', title: 'Choisissez', text: "Pays de départ, pays d'arrivée et bénéficiaire — en quelques secondes." },
+  { visual: 'verify', title: 'Vérifiez', text: 'Les frais (2 % + 100 FCFA) et le montant reçu s’affichent instantanément.' },
+  { visual: 'pay', title: 'Payez', text: 'Wave, Orange, MTN, Moov, carte… paiement sécurisé en un clic.' },
+  { visual: 'confirm', title: 'Confirmé', text: 'Le bénéficiaire reçoit l’argent. Vous suivez tout en temps réel.' },
 ];
 
 const FEATURES = [
-  { icon: '⚡', title: 'Ultra rapide', text: 'Transferts en quelques secondes, suivi en temps réel par webhooks.' },
-  { icon: '🔒', title: 'Sécurisé', text: 'Chiffrement, vérification systématique et paiements protégés.' },
-  { icon: '💸', title: 'Transparent', text: 'Frais affichés avant chaque envoi. Aucune surprise, jamais.' },
-  { icon: '🌐', title: 'Panafricain', text: '17 pays et tous les opérateurs Mobile Money, via GeniusPay.' },
-  { icon: '👛', title: 'Multi-paiement', text: 'Wave, Orange, MTN, Moov, Airtel, PawaPay, carte bancaire.' },
-  { icon: '🧾', title: 'Reçus & historique', text: 'Téléchargez vos reçus et retrouvez tout votre historique.' },
+  { visual: 'speed', title: 'Ultra rapide', text: 'Transferts en quelques secondes, suivi en temps réel par webhooks.' },
+  { visual: 'security', title: 'Sécurisé', text: 'Chiffrement, vérification systématique et paiements protégés.' },
+  { visual: 'transparent', title: 'Transparent', text: 'Frais affichés avant chaque envoi. Aucune surprise, jamais.' },
+  { visual: 'africa', title: 'Panafricain', text: '17 pays et tous les opérateurs Mobile Money, via GeniusPay.' },
+  { visual: 'payment', title: 'Multi-paiement', text: 'Wave, Orange, MTN, Moov, Airtel, PawaPay, carte bancaire.' },
+  { visual: 'receipt', title: 'Reçus & historique', text: 'Téléchargez vos reçus et retrouvez tout votre historique.' },
 ];
 
 const TESTIMONIALS = [
@@ -200,13 +202,14 @@ export default function LandingPage() {
         <Stagger className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <StaggerItem key={s.title}>
-              <div className="group relative h-full rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1.5 hover:shadow-xl">
+              <div className="group relative h-full overflow-hidden rounded-[2rem] border border-white/80 bg-[linear-gradient(145deg,#ffffff,#f8fbfb)] p-7 shadow-[0_18px_55px_rgba(15,23,42,.08)] ring-1 ring-slate-100 transition duration-300 hover:-translate-y-2 hover:shadow-[0_28px_70px_rgba(15,118,110,.16)]">
+                <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-emerald-100/65 blur-2xl transition group-hover:bg-amber-100" />
                 <div className="absolute right-6 top-6 text-6xl font-black text-slate-100 transition group-hover:text-brand-50">
                   {i + 1}
                 </div>
-                <div className="text-4xl">{s.icon}</div>
-                <h3 className="mt-5 text-xl font-bold">{s.title}</h3>
-                <p className="mt-2 text-sm text-slate-500">{s.text}</p>
+                <StepVisual3D type={s.visual as 'choose' | 'verify' | 'pay' | 'confirm'} />
+                <h3 className="relative mt-6 text-xl font-extrabold tracking-tight text-slate-950">{s.title}</h3>
+                <p className="relative mt-2 text-sm leading-6 text-slate-500">{s.text}</p>
               </div>
             </StaggerItem>
           ))}
@@ -302,8 +305,8 @@ export default function LandingPage() {
           <Stagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f) => (
               <StaggerItem key={f.title}>
-                <div className="h-full rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1.5 hover:shadow-xl">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-2xl">{f.icon}</div>
+                <div className="h-full rounded-3xl border border-white bg-white p-7 shadow-[0_16px_45px_rgba(15,23,42,.07)] ring-1 ring-slate-100 transition hover:-translate-y-1.5 hover:shadow-[0_26px_70px_rgba(15,118,110,.13)]">
+                  <FeatureIcon3D type={f.visual as 'speed' | 'security' | 'transparent' | 'africa' | 'payment' | 'receipt'} />
                   <h3 className="mt-5 text-xl font-bold">{f.title}</h3>
                   <p className="mt-2 text-sm text-slate-500">{f.text}</p>
                 </div>
@@ -361,7 +364,10 @@ export default function LandingPage() {
       {/* ============================== FOOTER ============================== */}
       <footer className="border-t border-slate-100 bg-white py-12">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
-          <div className="text-lg font-extrabold text-brand-700">🌍 AfriTransfer</div>
+          <div className="flex items-center gap-2 text-lg font-extrabold text-brand-800">
+            <span className="h-8 w-8 rounded-xl bg-[radial-gradient(circle_at_30%_20%,#ffffff,#1dd6c4_45%,#0f766e_78%)] shadow-[0_10px_22px_rgba(13,148,136,.24)] ring-1 ring-brand-200" />
+            AfriTransfer
+          </div>
           <p className="text-sm text-slate-400">
             Envoyez de l’argent partout en Afrique, simplement.
           </p>
