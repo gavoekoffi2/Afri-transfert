@@ -87,8 +87,18 @@ export async function unwrap<T>(promise: Promise<{ data: ApiEnvelope<T> }>): Pro
 /** Extrait un message d'erreur lisible depuis une réponse d'API. */
 export function errorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data as { error?: { message?: string } } | undefined;
-    return data?.error?.message ?? error.message;
+    const data = error.response?.data as
+      | { error?: { message?: string; details?: string[] } }
+      | undefined;
+    const err = data?.error;
+    // Les erreurs de validation contiennent le détail par champ : on l'affiche.
+    if (err?.details && err.details.length > 0) {
+      return err.details.join(' · ');
+    }
+    if (!error.response) {
+      return 'Connexion au serveur impossible. Vérifiez votre réseau et réessayez.';
+    }
+    return err?.message ?? error.message;
   }
   return 'Une erreur est survenue';
 }

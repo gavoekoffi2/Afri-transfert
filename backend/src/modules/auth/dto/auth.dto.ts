@@ -28,7 +28,8 @@ export class RegisterDto {
   lastName!: string;
 
   @ApiPropertyOptional({ example: '+221771234567' })
-  @Matches(/^\+[1-9]\d{6,14}$/, { message: 'Numéro de téléphone international invalide' })
+  // Tolérant à l'inscription (contact optionnel) : local ou international.
+  @Matches(/^\+?[0-9\s().-]{6,20}$/, { message: 'Numéro de téléphone invalide' })
   @IsOptional()
   phone?: string;
 

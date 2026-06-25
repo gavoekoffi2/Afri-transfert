@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { errorMessage } from '@/lib/api';
-import { formatMoney } from '@/lib/format';
+import { formatMoney, toInternationalPhone } from '@/lib/format';
 import { useCountries, useDetectPhone, useQuote, useSendMoney } from '@/lib/hooks';
 import { Quote } from '@/lib/types';
 
@@ -51,11 +51,12 @@ export default function SendMoneyPage() {
   async function onSend() {
     setError('');
     try {
+      const recipientCountry = countries?.find((c) => c.iso2 === recipientIso2);
       const tx = await sendMutation.mutateAsync({
         senderCountryIso2: senderIso2,
         recipientCountryIso2: recipientIso2,
         recipientName,
-        recipientPhone,
+        recipientPhone: toInternationalPhone(recipientPhone, recipientCountry?.callingCode ?? undefined),
         amount: numericAmount,
         operatorId: operatorId || undefined,
         saveBeneficiary,

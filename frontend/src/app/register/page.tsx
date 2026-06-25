@@ -7,6 +7,7 @@ import { errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useCountries } from '@/lib/hooks';
 import { Logo } from '@/components/logo';
+import { toInternationalPhone } from '@/lib/format';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -31,12 +32,16 @@ export default function RegisterPage() {
     setError('');
     setLoading(true);
     try {
+      // Normalise le téléphone au format international à partir du pays choisi
+      // (ex : 0712345678 + Cameroun → +237712345678).
+      const selectedCountry = countries?.find((c) => c.iso2 === form.countryIso2);
+      const phone = toInternationalPhone(form.phone, selectedCountry?.callingCode ?? undefined);
       await register({
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
         password: form.password,
-        phone: form.phone || undefined,
+        phone: phone || undefined,
         countryIso2: form.countryIso2 || undefined,
       });
       router.push('/dashboard');
@@ -97,7 +102,7 @@ export default function RegisterPage() {
                 type="password"
                 required
                 className="input"
-                placeholder="8+ caractères, 1 maj, 1 chiffre"
+                placeholder="8+ caractères, 1 majuscule, 1 minuscule, 1 chiffre"
                 value={form.password}
                 onChange={set('password')}
               />

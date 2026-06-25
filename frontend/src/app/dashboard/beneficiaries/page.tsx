@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
+import { toInternationalPhone } from '@/lib/format';
 import {
   useBeneficiaries,
   useCountries,
@@ -22,9 +23,10 @@ export default function BeneficiariesPage() {
     e.preventDefault();
     setError('');
     try {
+      const country = countries?.find((c) => c.iso2 === form.countryIso2);
       await create.mutateAsync({
         name: form.name,
-        phone: form.phone,
+        phone: toInternationalPhone(form.phone, country?.callingCode ?? undefined),
         countryIso2: form.countryIso2,
       });
       setForm({ name: '', phone: '', countryIso2: '' });

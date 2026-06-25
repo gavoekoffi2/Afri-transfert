@@ -16,6 +16,22 @@ export function formatMoney(amount: number, currency: string): string {
   return `${formatted} ${currency}`;
 }
 
+/**
+ * Met un numéro de téléphone au format international.
+ * - retire espaces/séparateurs ;
+ * - « 00xx » → « +xx » ;
+ * - numéro local (commençant par 0 ou sans indicatif) → préfixe l'indicatif du
+ *   pays sélectionné (ex : 0712345678 + CM(+237) → +237712345678).
+ */
+export function toInternationalPhone(raw: string, callingCode?: string): string {
+  const v = raw.replace(/[\s().-]/g, '');
+  if (!v) return '';
+  if (v.startsWith('+')) return v;
+  if (v.startsWith('00')) return '+' + v.slice(2);
+  if (callingCode) return callingCode + v.replace(/^0+/, '');
+  return v;
+}
+
 export function formatDate(iso: string): string {
   return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(
     new Date(iso),
