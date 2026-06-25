@@ -52,6 +52,7 @@ export class GeniusPayService {
         'X-API-Secret': this.config.apiSecret,
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        'User-Agent': 'Mozilla/5.0 AfriTransferServer/1.0',
         ...(extra.headers ?? {}),
       },
     };
