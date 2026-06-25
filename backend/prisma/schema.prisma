@@ -1,0 +1,446 @@
+// =============================================================================
+// AfriTransfer — Schéma de base de données (Prisma + PostgreSQL)
+// Plateforme panafricaine de transfert d'argent basée sur GeniusPay.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum UserStatus {
+  PENDING // inscription non vérifiée
+  ACTIVE
+  SUSPENDED
+  BLOCKED
+}
+
+enum UserRole {
+  USER
+  MERCHANT
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  SUPPORT
+  COMPLIANCE
+}
+
+// Cycle de vie d'une transaction. Aligné sur les statuts GeniusPay.
+enum TransactionStatus {
+  PENDING // créée, en attente de paiement
+  PROCESSING // en cours de traitement par le gateway
+  COMPLETED // paiement réussi, fonds crédités
+  FAILED // échec
+  CANCELLED // annulée par l'utilisateur / le marchand
+  EXPIRED // lien de paiement expiré
+  REFUNDED // remboursée
+}
+
+// Codes acceptés par le paramètre GeniusPay `payment_method`.
+enum PaymentMethod {
+  WAVE
+  ORANGE_MONEY
+  MTN_MONEY
+  MOOV_MONEY
+  AIRTEL_MONEY
+  PAWAPAY
+  PAYSTACK
+  CARD
+  CHECKOUT // aucun moyen choisi -> page de checkout hébergée GeniusPay
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PHONE_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum AuditActorType {
+  USER
+  ADMIN
+  SYSTEM
+  WEBHOOK
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+// =============================================================================
+// UTILISATEURS & AUTHENTIFICATION
+// =============================================================================
+
+model User {
+  id              String     @id @default(uuid())
+  email           String     @unique
+  phone           String?    @unique
+  passwordHash    String     @map("password_hash")
+  firstName       String     @map("first_name")
+  lastName        String     @map("last_name")
+  countryIso2     String?    @map("country_iso2")
+  status          UserStatus @default(PENDING)
+  role            UserRole   @default(USER)
+  emailVerifiedAt DateTime?  @map("email_verified_at")
+  phoneVerifiedAt DateTime?  @map("phone_verified_at")
+
+  // Architecture 2FA (TOTP) — prête, secret chiffré AES-256-GCM avant stockage.
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  twoFactorSecret  String? @map("two_factor_secret")
+
+  lastLoginAt DateTime? @map("last_login_at")
+
+  beneficiaries      Beneficiary[]
+  transactions       Transaction[]
+  verificationTokens VerificationToken[]
+  refreshTokens      RefreshToken[]
+  notifications      Notification[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("users")
+}
+
+// Jetons de vérification email/téléphone et de réinitialisation de mot de passe.
+// Seul le hash du jeton est stocké (jamais le jeton en clair).
+model VerificationToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  type      TokenType
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  consumedAt DateTime? @map("consumed_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([tokenHash])
+  @@map("verification_tokens")
+}
+
+// Sessions de rafraîchissement JWT (rotation possible). Hash uniquement.
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  userAgent String?   @map("user_agent")
+  ipAddress String?   @map("ip_address")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// =============================================================================
+// RÉFÉRENTIEL GÉOGRAPHIQUE & PAIEMENT
+// =============================================================================
+
+model Currency {
+  code      String  @id // ISO 4217 : XOF, XAF, CDF, USD…
+  name      String
+  symbol    String?
+  decimals  Int     @default(0)
+  isActive  Boolean @default(true) @map("is_active")
+
+  countries Country[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("currencies")
+}
+
+model Country {
+  id           String  @id @default(uuid())
+  iso2         String  @unique // CI, SN, CD…
+  iso3         String? // CIV, SEN…
+  name         String
+  callingCode  String? @map("calling_code") // +225, +221…
+  currencyCode String  @map("currency_code")
+  region       String? // UEMOA, CEMAC, Afrique de l'Est…
+  flagEmoji    String? @map("flag_emoji")
+  isActive     Boolean @default(true) @map("is_active")
+  supportsPawapay Boolean @default(false) @map("supports_pawapay")
+
+  currency  Currency   @relation(fields: [currencyCode], references: [code])
+  operators Operator[]
+
+  sentTransactions     Transaction[] @relation("SenderCountry")
+  receivedTransactions Transaction[] @relation("RecipientCountry")
+  beneficiaries        Beneficiary[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@map("countries")
+}
+
+// Opérateur Mobile Money (ex: ORANGE_CIV) tel qu'exposé par GeniusPay /pawapay/providers.
+model Operator {
+  id            String        @id @default(uuid())
+  code          String        @unique // ORANGE_CIV, MTN_MOMO_CMR…
+  name          String // Orange Money, MTN Mobile Money…
+  type          String        @default("MMO")
+  countryId     String        @map("country_id")
+  paymentMethod PaymentMethod @map("payment_method")
+  gateway       String? // wave, pawapay, orange_money, mtn_momo, moov_money
+  logoUrl       String?       @map("logo_url")
+  isActive      Boolean       @default(true) @map("is_active")
+
+  country       Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  beneficiaries Beneficiary[]
+  transactions  Transaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([countryId])
+  @@map("operators")
+}
+
+// =============================================================================
+// BÉNÉFICIAIRES
+// =============================================================================
+
+model Beneficiary {
+  id         String  @id @default(uuid())
+  userId     String  @map("user_id")
+  name       String
+  phone      String // numéro Mobile Money du bénéficiaire (format international)
+  countryId  String  @map("country_id")
+  operatorId String? @map("operator_id")
+  isFavorite Boolean @default(false) @map("is_favorite")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  country   Country   @relation(fields: [countryId], references: [id])
+  operator  Operator? @relation(fields: [operatorId], references: [id])
+  transactions Transaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("beneficiaries")
+}
+
+// =============================================================================
+// TRANSACTIONS
+// =============================================================================
+
+model Transaction {
+  id        String @id @default(uuid())
+  // Référence interne AfriTransfer (ex: ATR-XXXXXXXX), distincte de la référence GeniusPay.
+  reference String @unique
+
+  userId        String  @map("user_id")
+  beneficiaryId String? @map("beneficiary_id")
+
+  senderCountryId    String @map("sender_country_id")
+  recipientCountryId String @map("recipient_country_id")
+  operatorId         String? @map("operator_id")
+
+  recipientName  String  @map("recipient_name")
+  recipientPhone String  @map("recipient_phone")
+
+  paymentMethod PaymentMethod @map("payment_method")
+  gateway       String?
+  mmoProvider   String?       @map("mmo_provider")
+
+  // Décomposition financière (voir calculateTransferFees()).
+  sendAmount       Decimal @map("send_amount") @db.Decimal(18, 2)
+  sendCurrency     String  @map("send_currency")
+  commissionAmount Decimal @map("commission_amount") @db.Decimal(18, 2)
+  geniusPayFees    Decimal @default(0) @map("geniuspay_fees") @db.Decimal(18, 2)
+  totalAmount      Decimal @map("total_amount") @db.Decimal(18, 2) // débité à l'expéditeur
+  receiveAmount    Decimal @map("receive_amount") @db.Decimal(18, 2) // estimé reçu
+  receiveCurrency  String  @map("receive_currency")
+
+  status TransactionStatus @default(PENDING)
+
+  // Données GeniusPay
+  geniusPayId        String?  @map("geniuspay_id")
+  geniusPayReference String?  @unique @map("geniuspay_reference")
+  checkoutUrl        String?  @map("checkout_url")
+  paymentUrl         String?  @map("payment_url")
+  environment        String?  // sandbox | live
+  expiresAt          DateTime? @map("expires_at")
+
+  failureReason String?  @map("failure_reason")
+  metadata      Json?
+  completedAt   DateTime? @map("completed_at")
+
+  user        User             @relation(fields: [userId], references: [id])
+  beneficiary Beneficiary?     @relation(fields: [beneficiaryId], references: [id])
+  senderCountry    Country     @relation("SenderCountry", fields: [senderCountryId], references: [id])
+  recipientCountry Country     @relation("RecipientCountry", fields: [recipientCountryId], references: [id])
+  operator    Operator?        @relation(fields: [operatorId], references: [id])
+  logs        TransactionLog[]
+  webhookEvents WebhookEvent[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+// Journal d'audit du cycle de vie d'une transaction (chaque changement d'état).
+model TransactionLog {
+  id            String  @id @default(uuid())
+  transactionId String  @map("transaction_id")
+  fromStatus    TransactionStatus? @map("from_status")
+  toStatus      TransactionStatus  @map("to_status")
+  event         String  // ex: created, payment.success, webhook.applied
+  source        String  @default("system") // system | user | webhook | admin
+  message       String?
+  payload       Json?
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([transactionId])
+  @@map("transaction_logs")
+}
+
+// =============================================================================
+// WEBHOOKS — journal des événements reçus de GeniusPay (anti-rejeu + audit)
+// =============================================================================
+
+model WebhookEvent {
+  id String @id @default(uuid())
+
+  // Identifiants d'idempotence : "id" du payload + en-tête X-Webhook-Delivery.
+  eventId    String  @map("event_id")
+  deliveryId String? @unique @map("delivery_id")
+
+  event          String // payment.success, cashout.completed…
+  signatureValid Boolean @map("signature_valid")
+  timestamp      BigInt // X-Webhook-Timestamp (epoch)
+  environment    String? // sandbox | live
+  payload        Json
+
+  processed   Boolean   @default(false)
+  processedAt DateTime? @map("processed_at")
+  error       String?
+
+  transactionId String?      @map("transaction_id")
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+
+  receivedAt DateTime @default(now()) @map("received_at")
+
+  @@index([eventId])
+  @@index([event])
+  @@map("webhooks")
+}
+
+// =============================================================================
+// ADMINISTRATION
+// =============================================================================
+
+model Admin {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  name         String
+  role         AdminRole @default(ADMIN)
+  isActive     Boolean   @default(true) @map("is_active")
+
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  twoFactorSecret  String? @map("two_factor_secret")
+
+  lastLoginAt DateTime? @map("last_login_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
+// Configuration système clé/valeur. Les valeurs secrètes sont chiffrées (isSecret).
+model Setting {
+  id          String  @id @default(uuid())
+  key         String  @unique
+  value       String
+  type        String  @default("string") // string | number | boolean | json
+  group       String  @default("general") // general | commission | geniuspay | notifications
+  description String?
+  isSecret    Boolean @default(false) @map("is_secret")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+// Journal d'audit transverse (qui a fait quoi, quand, d'où).
+model AuditLog {
+  id        String         @id @default(uuid())
+  actorType AuditActorType @map("actor_type")
+  actorId   String?        @map("actor_id")
+  action    String // user.login, transaction.create, admin.country.update…
+  entity    String? // nom de l'entité concernée
+  entityId  String?        @map("entity_id")
+  ipAddress String?        @map("ip_address")
+  userAgent String?        @map("user_agent")
+  metadata  Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([actorType, actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// =============================================================================
+// NOTIFICATIONS (email / SMS / push)
+// =============================================================================
+
+model Notification {
+  id      String              @id @default(uuid())
+  userId  String?             @map("user_id")
+  channel NotificationChannel
+  status  NotificationStatus  @default(QUEUED)
+  to      String // email ou numéro de téléphone destinataire
+  subject String?
+  body    String
+  event   String? // payment.initiated, payment.success…
+  error   String?
+  sentAt  DateTime?           @map("sent_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([status])
+  @@map("notifications")
+}
