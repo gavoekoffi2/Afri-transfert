@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import {
+  BadGatewayException,
   HttpException,
   Inject,
   Injectable,
@@ -133,6 +134,12 @@ export class GeniusPayService {
       const code = body?.error?.code ?? 'GENIUSPAY_ERROR';
       const message = body?.error?.message ?? 'Erreur GeniusPay';
       this.logger.warn(`GeniusPay ${status} ${code}: ${message}`);
+      // Un 401/403 de GeniusPay = problème d'identifiants/marchand côté serveur :
+      // c'est une erreur de passerelle (502), pas un échec d'authentification du client.
+      // (sinon le dashboard admin déconnecterait l'utilisateur sur un simple appel solde)
+      if (status === 401 || status === 403) {
+        return new BadGatewayException({ message: `GeniusPay: ${message}`, error: code });
+      }
       return new HttpException({ message, error: code, geniuspay: true }, status);
     }
     // Erreur réseau / timeout : le service de paiement est injoignable.
