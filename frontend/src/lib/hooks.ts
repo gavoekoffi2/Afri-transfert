@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, unwrap } from './api';
+import { MVP_COUNTRIES } from './fallback-data';
 import {
   Beneficiary,
   Country,
@@ -16,7 +17,13 @@ import {
 export function useCountries() {
   return useQuery({
     queryKey: ['countries'],
-    queryFn: () => unwrap<Country[]>(api.get('/countries')),
+    queryFn: async () => {
+      try {
+        return await unwrap<Country[]>(api.get('/countries'));
+      } catch {
+        return MVP_COUNTRIES;
+      }
+    },
     staleTime: 1000 * 60 * 30,
   });
 }
