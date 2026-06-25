@@ -53,6 +53,7 @@ jobs:
       - run: npm ci
       - run: npx prisma generate
       - run: npx prisma migrate deploy
+      - run: npm run seed # données de référence requises par les tests e2e
       - run: npm run build
       - run: npm test
       - run: npm run test:e2e
