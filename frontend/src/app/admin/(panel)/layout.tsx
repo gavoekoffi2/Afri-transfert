@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminInfo, adminLogout, adminStore } from '@/lib/admin';
+import { Logo } from '@/components/logo';
 
 const NAV = [
   { href: '/admin', label: "Vue d'ensemble", icon: '📊' },
@@ -37,8 +38,8 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
     <div className="min-h-screen bg-slate-100 md:flex">
       {/* Sidebar */}
       <aside className="bg-slate-900 text-slate-300 md:flex md:min-h-screen md:w-64 md:flex-col">
-        <div className="flex items-center gap-2 px-6 py-5 text-lg font-extrabold text-white">
-          🌍 AfriTransfer
+        <div className="px-6 py-5">
+          <Logo tone="light" size={30} />
         </div>
         <div className="px-6 pb-4">
           <span className="rounded-full bg-brand-500/20 px-3 py-1 text-xs font-semibold text-brand-300">

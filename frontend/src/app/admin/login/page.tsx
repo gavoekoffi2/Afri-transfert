@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
 import { adminLogin } from '@/lib/admin';
+import { Logo } from '@/components/logo';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -29,9 +30,9 @@ export default function AdminLoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 px-6">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="text-2xl font-extrabold text-white">🌍 AfriTransfer</div>
-          <p className="mt-1 text-sm text-white/50">Espace administrateur</p>
+        <div className="mb-8 flex flex-col items-center">
+          <Logo tone="light" size={44} />
+          <p className="mt-3 text-sm text-white/50">Espace administrateur</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
           <h1 className="text-xl font-bold text-white">Connexion admin</h1>
@@ -46,7 +47,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-brand-400"
+                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-accent-400"
                 placeholder="admin@afritransfer.africa"
               />
             </div>
@@ -57,14 +58,14 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-brand-400"
+                className="w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-white/40 outline-none focus:border-accent-400"
                 placeholder="••••••••"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-brand-500 py-3 text-sm font-bold text-white transition hover:bg-brand-400 disabled:opacity-60"
+              className="w-full rounded-xl bg-accent-500 py-3 text-sm font-bold text-white shadow-lg shadow-accent-500/20 transition hover:bg-accent-400 disabled:opacity-60"
             >
               {loading ? 'Connexion…' : 'Accéder au tableau de bord'}
             </button>

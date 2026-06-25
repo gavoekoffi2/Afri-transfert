@@ -175,7 +175,7 @@ export default function SendMoneyPage() {
             {quote ? (
               <div className="mt-4 space-y-3 text-sm">
                 <Row label="Montant envoyé" value={formatMoney(quote.sendAmount, quote.sendCurrency)} />
-                <Row label="Commission AfriTransfer" value={formatMoney(quote.commission, quote.sendCurrency)} />
+                <Row label="Commission AfriTransfert" value={formatMoney(quote.commission, quote.sendCurrency)} />
                 <Row label="Frais GeniusPay (est.)" value={formatMoney(quote.geniusPayFees, quote.sendCurrency)} />
                 <div className="border-t border-slate-100 pt-3">
                   <Row

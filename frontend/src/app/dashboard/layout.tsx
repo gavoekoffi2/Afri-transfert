@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAuth } from '@/lib/auth';
+import { Logo } from '@/components/logo';
 
 const nav = [
   { href: '/dashboard', label: 'Accueil', icon: '🏠' },
@@ -34,8 +35,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="border-b border-slate-200 bg-white md:min-h-screen md:w-64 md:border-b-0 md:border-r">
         <div className="flex items-center justify-between p-6">
-          <Link href="/dashboard" className="text-lg font-extrabold text-brand-700">
-            🌍 AfriTransfer
+          <Link href="/dashboard" aria-label="AfriTransfert">
+            <Logo size={32} />
           </Link>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:pb-0">

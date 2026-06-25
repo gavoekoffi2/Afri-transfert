@@ -6,6 +6,7 @@ import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useCountries } from '@/lib/hooks';
+import { Logo } from '@/components/logo';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -49,8 +50,8 @@ export default function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-10">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 block text-center text-xl font-extrabold text-brand-700">
-          🌍 AfriTransfer
+        <Link href="/" className="mb-8 flex justify-center" aria-label="AfriTransfert">
+          <Logo size={42} />
         </Link>
         <div className="card">
           <h1 className="text-2xl font-bold">Créer un compte</h1>

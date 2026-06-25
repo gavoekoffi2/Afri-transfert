@@ -5,17 +5,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Bleu marine du logo « Afri » — couleur primaire / structure.
         brand: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+          50: '#eef2fb',
+          100: '#dae2f5',
+          200: '#b9c8ec',
+          300: '#8ea4dd',
+          400: '#5f78c8',
+          500: '#3d54ad',
+          600: '#2b3d88',
+          700: '#22306b',
+          800: '#18224d',
+          900: '#101730',
+          950: '#0a0f22',
+        },
+        // Vert du logo « Transfert » — accent / action / succès.
+        accent: {
+          50: '#ecfdf3',
+          100: '#d2f7df',
+          200: '#a8efc1',
+          300: '#6ee19b',
+          400: '#36c66f',
+          500: '#1aa64f',
+          600: '#138a41',
+          700: '#136c36',
+          800: '#14562e',
+          900: '#0f3f24',
         },
       },
       fontFamily: {

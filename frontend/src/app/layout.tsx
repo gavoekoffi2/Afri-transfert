@@ -3,7 +3,7 @@ import { Providers } from '@/lib/providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AfriTransfer — Envoyez de l\'argent partout en Afrique',
+  title: 'AfriTransfert — Transférez. Encaissez. Réussissez.',
   description:
     'Plateforme panafricaine de transfert d\'argent. Simple, rapide et sécurisée, propulsée par GeniusPay.',
 };

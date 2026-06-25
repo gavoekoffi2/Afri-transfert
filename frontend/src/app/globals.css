@@ -15,14 +15,19 @@ body {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60;
   }
+  /* Action principale = vert (la couleur « Transfert » du logo). */
   .btn-primary {
-    @apply btn bg-brand-700 text-white hover:bg-brand-600;
+    @apply btn bg-accent-500 text-white shadow-lg shadow-accent-500/20 hover:bg-accent-600;
+  }
+  /* Action structurante = bleu marine (la couleur « Afri » du logo). */
+  .btn-navy {
+    @apply btn bg-brand-800 text-white hover:bg-brand-700;
   }
   .btn-ghost {
-    @apply btn bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50;
+    @apply btn bg-white text-brand-800 ring-1 ring-slate-200 hover:bg-slate-50;
   }
   .input {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-accent-500 focus:ring-2 focus:ring-accent-100;
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-slate-700;
@@ -30,4 +35,31 @@ body {
   .card {
     @apply rounded-2xl border border-slate-100 bg-white p-6 shadow-sm;
   }
+  /* Bordure dégradée bleu marine → vert (finesse premium). */
+  .gradient-ring {
+    @apply relative rounded-3xl;
+    background:
+      linear-gradient(white, white) padding-box,
+      linear-gradient(135deg, #18224d, #1aa64f) border-box;
+    border: 1.5px solid transparent;
+  }
+}
+
+/* Léger grain de film pour un rendu premium. */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Défilement doux et sélection aux couleurs de la marque. */
+html {
+  scroll-behavior: smooth;
+}
+::selection {
+  background: #1aa64f;
+  color: #fff;
 }

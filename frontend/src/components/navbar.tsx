@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Logo } from './logo';
 
 const links = [
   { href: '#how', label: 'Comment ça marche' },
@@ -31,8 +32,8 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-white">
-          <span className="text-2xl">🌍</span> AfriTransfer
+        <Link href="/" aria-label="AfriTransfert">
+          <Logo tone="light" size={34} />
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">

@@ -105,22 +105,22 @@ export function CountUp({
 }
 
 /* ----------------------------------------------------------- GradientBlobs */
-/** Arrière-plan animé : taches de couleur en mouvement lent (mesh gradient). */
+/** Arrière-plan animé : taches de couleur en mouvement lent (bleu marine + vert du logo). */
 export function GradientBlobs() {
   return (
     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       <motion.div
-        className="absolute -left-32 -top-24 h-[28rem] w-[28rem] rounded-full bg-brand-400/30 blur-3xl"
+        className="absolute -left-32 -top-24 h-[28rem] w-[28rem] rounded-full bg-accent-500/25 blur-3xl"
         animate={{ x: [0, 60, 0], y: [0, 40, 0], scale: [1, 1.1, 1] }}
         transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute -right-24 top-32 h-[26rem] w-[26rem] rounded-full bg-amber-300/30 blur-3xl"
+        className="absolute -right-24 top-32 h-[26rem] w-[26rem] rounded-full bg-brand-400/25 blur-3xl"
         animate={{ x: [0, -50, 0], y: [0, 60, 0], scale: [1, 1.15, 1] }}
         transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-emerald-400/20 blur-3xl"
+        className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-accent-400/20 blur-3xl"
         animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -129,7 +129,7 @@ export function GradientBlobs() {
 }
 
 /* --------------------------------------------------------------- Coin */
-/** Pièce FCFA flottante (décor). */
+/** Jeton FCFA flottant (décor) — vert « Transfert » du logo. */
 export function Coin({
   className,
   delay = 0,
@@ -143,7 +143,7 @@ export function Coin({
 }) {
   return (
     <motion.div
-      className={`absolute flex items-center justify-center rounded-full bg-gradient-to-br from-amber-300 to-amber-500 font-bold text-amber-900 shadow-lg shadow-amber-500/30 ring-4 ring-amber-200/60 ${className ?? ''}`}
+      className={`absolute flex items-center justify-center rounded-full bg-gradient-to-br from-accent-300 to-accent-600 font-bold text-white shadow-lg shadow-accent-500/40 ring-4 ring-accent-200/50 ${className ?? ''}`}
       style={{ width: size, height: size, fontSize: size * 0.22 }}
       animate={{ y: [0, -16, 0], rotate: [0, 8, 0] }}
       transition={{ duration: 4 + delay, repeat: Infinity, ease: 'easeInOut', delay }}

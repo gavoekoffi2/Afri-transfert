@@ -23,7 +23,7 @@ export default function AdminSettingsPage() {
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Commissions &amp; configuration</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Modifiez la commission AfriTransfer (2 % + 100 FCFA), les limites et la configuration GeniusPay.
+          Modifiez la commission AfriTransfert (2 % + 100 FCFA), les limites et la configuration GeniusPay.
         </p>
       </div>
 
