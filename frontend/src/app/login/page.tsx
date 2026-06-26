@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { AfriTransferLogo } from '@/components/brand';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -31,9 +32,9 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 block text-center text-xl font-extrabold text-brand-700">
-          🌍 AfriTransfer
-        </Link>
+        <div className="mb-8 flex justify-center">
+          <AfriTransferLogo tone="dark" />
+        </div>
         <div className="card">
           <h1 className="text-2xl font-bold">Connexion</h1>
           <p className="mt-1 text-sm text-slate-500">Heureux de vous revoir.</p>

@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAuth } from '@/lib/auth';
+import { AfriTransferLogo } from '@/components/brand';
 
 const nav = [
-  { href: '/dashboard', label: 'Accueil', icon: '🏠' },
-  { href: '/dashboard/send', label: 'Envoyer', icon: '💸' },
-  { href: '/dashboard/history', label: 'Historique', icon: '📜' },
-  { href: '/dashboard/beneficiaries', label: 'Bénéficiaires', icon: '👥' },
+  { href: '/dashboard', label: 'Accueil', icon: 'AC' },
+  { href: '/dashboard/send', label: 'Envoyer', icon: 'EN' },
+  { href: '/dashboard/history', label: 'Historique', icon: 'HI' },
+  { href: '/dashboard/beneficiaries', label: 'Bénéficiaires', icon: 'BE' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -34,9 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <aside className="border-b border-slate-200 bg-white md:min-h-screen md:w-64 md:border-b-0 md:border-r">
         <div className="flex items-center justify-between p-6">
-          <Link href="/dashboard" className="text-lg font-extrabold text-brand-700">
-            🌍 AfriTransfer
-          </Link>
+          <AfriTransferLogo href="/dashboard" tone="dark" />
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:pb-0">
           {nav.map((item) => {
@@ -49,7 +48,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   active ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                <span>{item.icon}</span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-[10px] font-black tracking-tight text-brand-700">{item.icon}</span>
                 {item.label}
               </Link>
             );

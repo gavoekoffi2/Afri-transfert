@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
 import { adminLogin } from '@/lib/admin';
+import { AfriTransferLogo } from '@/components/brand';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-brand-900 to-slate-900 px-6">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="text-2xl font-extrabold text-white">🌍 AfriTransfer</div>
+          <div className="flex justify-center"><AfriTransferLogo /></div>
           <p className="mt-1 text-sm text-white/50">Espace administrateur</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">

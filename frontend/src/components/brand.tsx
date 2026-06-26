@@ -3,10 +3,13 @@ import Link from 'next/link';
 type BrandMarkProps = {
   href?: string;
   compact?: boolean;
+  tone?: 'light' | 'dark';
   className?: string;
 };
 
-export function AfriTransferLogo({ href = '/', compact = false, className = '' }: BrandMarkProps) {
+export function AfriTransferLogo({ href = '/', compact = false, tone = 'light', className = '' }: BrandMarkProps) {
+  const wordmarkClass = tone === 'dark' ? 'text-brand-900' : 'text-white';
+  const taglineClass = tone === 'dark' ? 'text-amber-700' : 'text-amber-200/90';
   const content = (
     <>
       <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_30%_20%,#ffffff_0,#d9fff8_18%,#17c8b8_43%,#0f766e_70%,#063b36_100%)] shadow-[0_18px_42px_rgba(13,148,136,.38),inset_0_1px_1px_rgba(255,255,255,.75)] ring-1 ring-white/35">
@@ -31,8 +34,8 @@ export function AfriTransferLogo({ href = '/', compact = false, className = '' }
       </span>
       {!compact && (
         <span className="leading-none">
-          <span className="block text-[1.08rem] font-black tracking-[-0.035em] text-white">AfriTransfer</span>
-          <span className="mt-1 block text-[0.62rem] font-bold uppercase tracking-[0.22em] text-amber-200/90">Money across Africa</span>
+          <span className={`block text-[1.08rem] font-black tracking-[-0.035em] ${wordmarkClass}`}>AfriTransfer</span>
+          <span className={`mt-1 block text-[0.62rem] font-bold uppercase tracking-[0.22em] ${taglineClass}`}>Money across Africa</span>
         </span>
       )}
     </>

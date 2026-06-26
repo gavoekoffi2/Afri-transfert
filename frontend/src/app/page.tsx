@@ -139,14 +139,14 @@ export default function LandingPage() {
               className="absolute -bottom-6 -left-6 w-64 rounded-2xl border border-white/60 bg-white/95 p-5 text-slate-800 shadow-2xl backdrop-blur"
             >
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Vous envoyez</span><span>🇨🇲 → 🇹🇬</span>
+                <span>Vous envoyez</span><span>CM → TG</span>
               </div>
               <p className="mt-1 text-2xl font-extrabold text-slate-900">10 000 FCFA</p>
               <div className="mt-3 space-y-1 text-xs text-slate-500">
                 <div className="flex justify-between"><span>Commission</span><span>300 FCFA</span></div>
                 <div className="flex justify-between font-semibold text-emerald-600"><span>Reçu</span><span>10 000 FCFA</span></div>
               </div>
-              <div className="mt-3 rounded-lg bg-brand-700 py-2 text-center text-sm font-bold text-white">Envoyé ✓</div>
+              <div className="mt-3 rounded-lg bg-brand-700 py-2 text-center text-sm font-bold text-white">Envoyé</div>
             </motion.div>
 
             <Coin className="-right-4 top-8" delay={0} size={66} />
@@ -259,7 +259,7 @@ export default function LandingPage() {
               ].map((t) => (
                 <StaggerItem key={t}>
                   <div className="flex items-center gap-3">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 text-sm font-bold text-emerald-950">✓</span>
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-400 text-[10px] font-black text-emerald-950">OK</span>
                     <span className="text-white/90">{t}</span>
                   </div>
                 </StaggerItem>

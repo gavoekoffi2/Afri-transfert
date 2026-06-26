@@ -6,6 +6,7 @@ import { FormEvent, useState } from 'react';
 import { errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useCountries } from '@/lib/hooks';
+import { AfriTransferLogo } from '@/components/brand';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -28,6 +29,11 @@ export default function RegisterPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    const normalizedPhone = form.phone.trim();
+    if (normalizedPhone && !/^\+[1-9]\d{6,14}$/.test(normalizedPhone)) {
+      setError('Téléphone invalide. Utilisez le format international avec uniquement des chiffres, exemple : +22890123456. Sinon laissez le champ vide.');
+      return;
+    }
     setLoading(true);
     try {
       await register({
@@ -35,7 +41,7 @@ export default function RegisterPage() {
         lastName: form.lastName,
         email: form.email,
         password: form.password,
-        phone: form.phone || undefined,
+        phone: normalizedPhone || undefined,
         countryIso2: form.countryIso2 || undefined,
       });
       router.push('/dashboard');
@@ -49,9 +55,9 @@ export default function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-10">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 block text-center text-xl font-extrabold text-brand-700">
-          🌍 AfriTransfer
-        </Link>
+        <div className="mb-8 flex justify-center">
+          <AfriTransferLogo tone="dark" />
+        </div>
         <div className="card">
           <h1 className="text-2xl font-bold">Créer un compte</h1>
           <p className="mt-1 text-sm text-slate-500">Commencez à envoyer en quelques minutes.</p>
@@ -77,7 +83,7 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="label">Téléphone (optionnel)</label>
-              <input className="input" placeholder="+221771234567" value={form.phone} onChange={set('phone')} />
+              <input className="input" placeholder="+22890123456" value={form.phone} onChange={set('phone')} />
             </div>
             <div>
               <label className="label">Pays</label>
@@ -85,7 +91,7 @@ export default function RegisterPage() {
                 <option value="">Sélectionnez…</option>
                 {countries?.map((c) => (
                   <option key={c.iso2} value={c.iso2}>
-                    {c.flagEmoji} {c.name}
+                    {c.name}
                   </option>
                 ))}
               </select>

@@ -4,14 +4,15 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminInfo, adminLogout, adminStore } from '@/lib/admin';
+import { AfriTransferLogo } from '@/components/brand';
 
 const NAV = [
-  { href: '/admin', label: "Vue d'ensemble", icon: '📊' },
-  { href: '/admin/users', label: 'Utilisateurs', icon: '👤' },
-  { href: '/admin/transactions', label: 'Transactions', icon: '💳' },
-  { href: '/admin/countries', label: 'Pays & opérateurs', icon: '🌍' },
-  { href: '/admin/settings', label: 'Commissions & config', icon: '⚙️' },
-  { href: '/admin/webhooks', label: 'Webhooks', icon: '🪝' },
+  { href: '/admin', label: "Vue d'ensemble", icon: 'DB' },
+  { href: '/admin/users', label: 'Utilisateurs', icon: 'US' },
+  { href: '/admin/transactions', label: 'Transactions', icon: 'TX' },
+  { href: '/admin/countries', label: 'Pays & opérateurs', icon: 'PY' },
+  { href: '/admin/settings', label: 'Commissions & config', icon: 'CF' },
+  { href: '/admin/webhooks', label: 'Webhooks', icon: 'WH' },
 ];
 
 export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
@@ -37,8 +38,8 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
     <div className="min-h-screen bg-slate-100 md:flex">
       {/* Sidebar */}
       <aside className="bg-slate-900 text-slate-300 md:flex md:min-h-screen md:w-64 md:flex-col">
-        <div className="flex items-center gap-2 px-6 py-5 text-lg font-extrabold text-white">
-          🌍 AfriTransfer
+        <div className="px-6 py-5">
+          <AfriTransferLogo href="/admin" compact />
         </div>
         <div className="px-6 pb-4">
           <span className="rounded-full bg-brand-500/20 px-3 py-1 text-xs font-semibold text-brand-300">
@@ -56,7 +57,7 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
                   active ? 'bg-brand-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                 }`}
               >
-                <span>{item.icon}</span>
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-[10px] font-black tracking-tight text-brand-200">{item.icon}</span>
                 {item.label}
               </Link>
             );

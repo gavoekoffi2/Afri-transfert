@@ -26,7 +26,7 @@ export default function AdminCountriesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Pays &amp; opérateurs</h1>
         <button onClick={onSync} disabled={sync.isPending} className="btn-primary">
-          {sync.isPending ? 'Synchronisation…' : '🔄 Synchroniser depuis GeniusPay'}
+          {sync.isPending ? 'Synchronisation…' : 'Synchroniser depuis GeniusPay'}
         </button>
       </div>
 
@@ -43,7 +43,7 @@ export default function AdminCountriesPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-lg font-bold text-slate-800">
-                    {c.flagEmoji} {c.name}
+                    {c.name}
                   </p>
                   <p className="text-xs text-slate-400">
                     {c.iso2} · {c.currencyCode} · {c._count?.operators ?? 0} opérateurs

@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { AdminSetting, useAdminSettings, useUpdateSetting } from '@/lib/admin-hooks';
 
 const GROUP_LABELS: Record<string, string> = {
-  commission: '💰 Commissions',
-  geniuspay: '🔌 GeniusPay',
-  general: '⚙️ Général',
+  commission: 'Commissions',
+  geniuspay: 'GeniusPay',
+  general: 'Général',
 };
 
 export default function AdminSettingsPage() {
